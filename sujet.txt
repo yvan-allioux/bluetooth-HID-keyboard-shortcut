@@ -1,0 +1,52 @@
+Mini projet
+Bluetooth HID
+
+Réaliser une application Android/Kotlin permettant via Bluetooth d’appairer,  configurer et simuler un appareil d’interface humaine :HID.
+https://learn.microsoft.com/fr-fr/windows-hardware/drivers/hid/
+
+L’interface  utilisateur devra permettre de :
+découvrir, appairer et connecter via Bluetooth un host HID tel qu’ un autre Android, un  mac, … 
+https://developer.android.com/reference/android/bluetooth/BluetoothHidDevice
+
+définir et conserver plusieurs profil HID. 
+
+proposer plusieurs profils HID avec une interface de définition de nouvelle touche, raccourci via un key Binding.
+https://developer.apple.com/library/archive/technotes/tn2450/_index.html
+https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2
+
+Pour la mise en œuvre de ce mini projet sont conseillés
+
+Kotlin coroutines
+https://developer.android.com/kotlin/coroutines?hl=fr
+
+ Android room
+https://developer.android.com/training/data-storage/room?hl=fr
+
+profil Bluetooth HID 
+https://developer.android.com/develop/connectivity/bluetooth/profiles
+https://developer.android.com/reference/android/bluetooth/BluetoothProfile
+https://developer.android.com/reference/android/bluetooth/BluetoothProfile#HID_DEVICE
+
+Les icones google material design
+ https://fonts.google.com/icons
+
+
+2)  Git 
+créer un repository sur Github ou Gitlab pour vos sources de mini projet, ce repository sera utilisé pour l’évaluation de votre mini projet 
+3)  Mini projet :
+
+Le nom de package de votre mini projet devra être :  	fr.enssat.bluetoothhid.nom_du_binome
+
+Base de la notation :
+Discover, connexion déconnexion Bluetooth
+UI gestion liste des profils HID  	 
+UI gestion des key binding et icons.
+mapParsing/Réification Json, utilisation de retrofit et moshi  
+Utilisation de Git au sein du binome projet + github/gitlab
+Apk + Démo Ux sympa…
+Doc/slides : architecture technique, choix logiciel.(max 10 pages)
+
+Livrables :
+un lien du dépôt github/gitlab  de vos sources.
+un apk de test. 
+une documentation. (max 10 pages).
