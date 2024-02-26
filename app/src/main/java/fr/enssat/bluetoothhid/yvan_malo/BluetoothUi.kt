@@ -115,12 +115,6 @@ fun BluetoothDesk(bluetoothController: BluetoothController, deckDao: DeckDao, sh
     var selectedProfile by remember { mutableStateOf(1) }
     val profiles = listOf("Profile 1", "Profile 2")
 
-    for(profile in profiles){
-        deckDao.insert(Deck(profile))
-    }
-
-
-
     var expanded by remember { mutableStateOf(false) }
 
     // Fonction pour envoyer des raccourcis clavier
@@ -153,7 +147,6 @@ fun BluetoothDesk(bluetoothController: BluetoothController, deckDao: DeckDao, sh
     fun updateButtonText(buttonNumber: Int, newText: String) {
         buttonLabels[buttonNumber] = newText
     }
-
     // Menu déroulant pour le choix du profil
     DropdownMenu(
         expanded = expanded,
