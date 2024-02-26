@@ -102,7 +102,7 @@ fun BluetoothUiConnection(bluetoothController: BluetoothController) {
 }
 
 @Composable
-fun BluetoothDesk(bluetoothController: BluetoothController) {
+fun BluetoothDesk(bluetoothController: BluetoothController, deckDao: DeckDao, shortcutDao: ShortcutDao, shortcutbydeckDao: ShortcutbydeckDao) {
     // S'assure qu'un appareil est connecté avant de continuer
     val connected = bluetoothController.status as? BluetoothController.Status.Connected ?: return
 
@@ -114,6 +114,13 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
     // Gestion du profil sélectionné
     var selectedProfile by remember { mutableStateOf(1) }
     val profiles = listOf("Profile 1", "Profile 2")
+
+    for(profile in profiles){
+        deckDao.insert(Deck(profile))
+    }
+
+
+
     var expanded by remember { mutableStateOf(false) }
 
     // Fonction pour envoyer des raccourcis clavier
@@ -121,12 +128,6 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         val result = keyboardSender.sendKeyboard(shortcut.shortcutKey, shortcut.modifiers, releaseModifiers)
         if (!result) Toast.makeText(context, "Can't find keymap for $shortcut", Toast.LENGTH_LONG).show()
     }
-
-    // Actions associées à chaque profil
-    val profileActions = mapOf(
-        1 to { press(Shortcut(KeyEvent.KEYCODE_A)) }, // Action pour le Profil 1
-        2 to { press(Shortcut(KeyEvent.KEYCODE_1)) }  // Action pour le Profil 2
-    )
 
     // UI pour sélectionner le profil
     Text("Selected Profile: ")

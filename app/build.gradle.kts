@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.bluetoothsample"
+    namespace = "fr.enssat.bluetoothhid.yvan_malo"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.bluetoothsample"
+        applicationId = "fr.enssat.bluetoothhid.yvan_malo"
         minSdk = 28
         targetSdk = 34
         versionCode = 1

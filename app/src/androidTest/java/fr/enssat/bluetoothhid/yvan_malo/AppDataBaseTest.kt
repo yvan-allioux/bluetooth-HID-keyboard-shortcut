@@ -31,9 +31,9 @@ class AppDataBaseTest {
 
     @Test
     fun createDeck() {
-        val sc1 = db.shortcutDao().insert(Shortcut(KeyEvent.KEYCODE_A))
-        val sc2 = db.shortcutDao().insert(Shortcut(KeyEvent.KEYCODE_B))
-        val sc3 = db.shortcutDao().insert(Shortcut(KeyEvent.KEYCODE_C))
+        val sc1 = db.shortcutDao().insert(Shortcut("sc1", KeyEvent.KEYCODE_A))
+        val sc2 = db.shortcutDao().insert(Shortcut("sc2", KeyEvent.KEYCODE_B))
+        val sc3 = db.shortcutDao().insert(Shortcut("sc3",KeyEvent.KEYCODE_C))
 
         Log.d("DEBUG", "shortcuts: $sc1, $sc2, $sc3")
 

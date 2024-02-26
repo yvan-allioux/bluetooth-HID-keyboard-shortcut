@@ -14,12 +14,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.room.Room
 
 class MainActivity : ComponentActivity() {
     companion object {
         const val TAG = "MainActivity"
     }
 
+    private lateinit var db: AppDataBase
     private lateinit var bluetoothController: BluetoothController
 
     private fun ensureBluetoothPermission(activity: ComponentActivity) {
@@ -44,13 +46,17 @@ class MainActivity : ComponentActivity() {
 
         ensureBluetoothPermission(this)
 
+        db = Room.databaseBuilder(applicationContext, AppDataBase::class.java, "hid_db").build()
+        val deckDao = db.deckDao()
+        val shortcutDao = db.shortcutDao()
+        val shortcutbydeckDao = db.shortcutbydeckDao()
         bluetoothController = BluetoothController()
 
         setContent {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         BluetoothUiConnection(bluetoothController)
-                        BluetoothDesk(bluetoothController)
+                        BluetoothDesk(bluetoothController, deckDao,shortcutDao,shortcutbydeckDao)
                     }
                 }
         }
