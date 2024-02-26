@@ -2,7 +2,6 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
-        gradlePluginPortal()
     }
 }
 dependencyResolutionManagement {
@@ -13,5 +12,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "bluetooth-HID-keyboard-shortcut"
+rootProject.name = "bluetoothsample"
 include(":app")
+ 

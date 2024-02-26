@@ -1,4 +1,4 @@
-package fr.enssat.bluetoothhid.yvan_malo
+package com.example.bluetoothsample
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -9,9 +9,9 @@ import org.junit.runner.RunWith
 import org.junit.Assert.*
 
 /**
- * Instrumented test, which will execute on an Android device.
+ * Instrumented test
  *
- * See [testing documentation](http://d.android.com/tools/testing).
+ * https://developer.android.com/studio/test
  */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("fr.enssat.bluetoothhid.yvan_malo", appContext.packageName)
+        assertEquals("com.example.bluetoothsample", appContext.packageName)
     }
 }
