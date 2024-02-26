@@ -20,7 +20,6 @@ class ListModifiersConverter {
 @Entity
 @TypeConverters(ListModifiersConverter::class)
 data class Shortcut(
-    val label: String,
     val shortcutKey: Int,
     val modifiers: List<KeyModifier> = emptyList(),
     val releaseModifiers: Boolean = true,
