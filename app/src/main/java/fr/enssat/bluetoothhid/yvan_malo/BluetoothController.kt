@@ -1,4 +1,4 @@
-package com.example.bluetoothsample
+package fr.enssat.bluetoothhid.yvan_malo
 
 import android.annotation.SuppressLint
 import android.bluetooth.*

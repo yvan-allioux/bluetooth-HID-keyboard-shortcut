@@ -20,7 +20,7 @@
         tools:targetApi="31">
 
     <activity
-        android:name="com.example.bluetoothsample.MainActivity"
+        android:name="fr.enssat.bluetoothhid.yvan_malo.MainActivity"
         android:exported="true"
         android:theme="@style/Theme.BluetoothSample">
         <intent-filter>

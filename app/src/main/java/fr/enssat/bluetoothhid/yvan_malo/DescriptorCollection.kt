@@ -1,4 +1,4 @@
-package com.example.bluetoothsample
+package fr.enssat.bluetoothhid.yvan_malo
 
 object DescriptorCollection {
 
