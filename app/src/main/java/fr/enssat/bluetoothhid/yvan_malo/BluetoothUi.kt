@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -145,6 +146,29 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         }
     }
 
+
+
+    val buttonLabels = remember {
+        mutableStateMapOf<Int, String>(
+            1 to "Action 1",
+            2 to "Action 2",
+            3 to "Action 3",
+            4 to "Action 4",
+            5 to "Action 5",
+            6 to "Action 6",
+            7 to "Action 7",
+            8 to "Action 8"
+        )
+    }
+
+    // Fonction pour mettre à jour le texte d'un bouton
+    fun updateButtonText(buttonNumber: Int, newText: String) {
+        buttonLabels[buttonNumber] = newText
+    }
+    Button(onClick = { updateButtonText(2, "New Text for Button 2") }) {
+        Text("Change texte btn")
+    }
+
     fun alphanum (){
         press(Shortcut(KeyEvent.KEYCODE_A))
     }
@@ -163,7 +187,10 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         8 to listOf({ press(Shortcut(KeyEvent.KEYCODE_H)) }, { press(Shortcut(KeyEvent.KEYCODE_8)) })
     )
 
-    Column(modifier = Modifier.fillMaxWidth().padding(20.dp).fillMaxSize()) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(20.dp)
+        .fillMaxSize()) {
         Spacer(modifier = Modifier.weight(1f)) // Espacement pour aligner le contenu
         Text("Stream Deck Controls")
         Spacer(modifier = Modifier.size(10.dp))
@@ -172,7 +199,9 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         val buttonHeightWeight = 1f
         Column {
             for (row in 1..4) {
-                Row(modifier = Modifier.fillMaxWidth().weight(buttonHeightWeight), horizontalArrangement = Arrangement.SpaceEvenly) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(buttonHeightWeight), horizontalArrangement = Arrangement.SpaceEvenly) {
                     for (column in 1..2) {
                         val buttonIndex = (row - 1) * 2 + column
                         Button(
@@ -182,7 +211,7 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
                                 .fillMaxHeight(),
                             onClick = { buttonActions[buttonIndex]?.get(selectedProfile - 1)?.invoke() }
                         ) {
-                            Text("Action $buttonIndex")
+                            Text(buttonLabels[buttonIndex] ?: "Action $buttonIndex")
                         }
                     }
                 }
@@ -190,5 +219,6 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
             }
         }
     }
+
 }
 
