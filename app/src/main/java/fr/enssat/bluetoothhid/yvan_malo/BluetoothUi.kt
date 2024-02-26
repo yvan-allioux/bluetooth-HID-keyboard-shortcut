@@ -4,7 +4,9 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.view.KeyEvent
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,13 +16,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothDisabled
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -130,6 +135,24 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         Text("Change Profile")
     }
 
+
+    val buttonLabels = remember {
+        mutableStateMapOf<Int, String>(
+            1 to "Action 1",
+            2 to "Action 2",
+            3 to "Action 3",
+            4 to "Action 4",
+            5 to "Action 5",
+            6 to "Action 6",
+            7 to "Action 7",
+            8 to "Action 8"
+        )
+    }
+    // Fonction pour mettre à jour le texte d'un bouton
+    fun updateButtonText(buttonNumber: Int, newText: String) {
+        buttonLabels[buttonNumber] = newText
+    }
+
     // Menu déroulant pour le choix du profil
     DropdownMenu(
         expanded = expanded,
@@ -148,26 +171,64 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
 
 
 
-    val buttonLabels = remember {
-        mutableStateMapOf<Int, String>(
-            1 to "Action 1",
-            2 to "Action 2",
-            3 to "Action 3",
-            4 to "Action 4",
-            5 to "Action 5",
-            6 to "Action 6",
-            7 to "Action 7",
-            8 to "Action 8"
-        )
-    }
+        var selectedButton by remember { mutableStateOf(1) }
+        var showDropdown by remember { mutableStateOf(false) }
+        var showPopup by remember { mutableStateOf(false) }
 
-    // Fonction pour mettre à jour le texte d'un bouton
-    fun updateButtonText(buttonNumber: Int, newText: String) {
-        buttonLabels[buttonNumber] = newText
-    }
-    Button(onClick = { updateButtonText(2, "New Text for Button 2") }) {
-        Text("Change texte btn")
-    }
+        Box(modifier = Modifier.clickable { showDropdown = !showDropdown }) {
+            Text("Selected button: $selectedButton")
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "Dropdown",
+                modifier = Modifier.align(Alignment.CenterEnd).padding(start = 8.dp)
+            )
+
+            DropdownMenu(
+                expanded = showDropdown,
+                onDismissRequest = { showDropdown = false }
+            ) {
+                (1..8).forEach { buttonIndex ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedButton = buttonIndex
+                            showDropdown = false
+                            showPopup = true
+                        },
+                        text = { Text("Button $buttonIndex") }
+                    )
+                }
+            }
+        }
+
+        if (showPopup) {
+            var newText by remember { mutableStateOf("") }
+
+            AlertDialog(
+                onDismissRequest = { showPopup = false },
+                title = { Text("Enter new button text") },
+                text = {
+                    TextField(
+                        value = newText,
+                        onValueChange = { newText = it },
+                        label = { Text("New text") }
+                    )
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        updateButtonText(selectedButton, newText)
+                        showPopup = false
+                    }) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { showPopup = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
 
     fun alphanum (){
         press(Shortcut(KeyEvent.KEYCODE_A))
