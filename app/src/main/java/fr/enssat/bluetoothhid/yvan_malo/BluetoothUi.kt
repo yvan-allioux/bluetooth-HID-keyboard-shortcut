@@ -39,7 +39,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun BluetoothUiConnection(bluetoothController: BluetoothController) {
     // Contexte actuel de l'application
@@ -157,12 +156,10 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         val result = keyboardSender.sendKeyboard(shortcut.shortcutKey, shortcut.modifiers, releaseModifiers)
         if (!result) Toast.makeText(context, "Can't find keymap for $shortcut", Toast.LENGTH_LONG).show()
     }
-
-    // Actions associées à chaque profil
-    val profileActions = mapOf(
-        1 to { press(Shortcut(KeyEvent.KEYCODE_A)) }, // Action pour le Profil 1
-        2 to { press(Shortcut(KeyEvent.KEYCODE_1)) }  // Action pour le Profil 2
-    )
+    fun press(keyCode: Int, releaseModifiers: Boolean = true) {
+        val result = keyboardSender.sendKeyboard(keyCode, emptyList(), releaseModifiers)
+        if (!result) Toast.makeText(context, "Can't find keymap for $keyCode", Toast.LENGTH_LONG).show()
+    }
 
     // UI pour sélectionner le profil
     Text("Selected Profile: ")
@@ -206,7 +203,7 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         var showPopup by remember { mutableStateOf(false) }
 
         Box(modifier = Modifier.clickable { showDropdown = !showDropdown }) {
-            Text("Selected button: $selectedButton")
+            Text("Change button text  : $selectedButton")
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
                 contentDescription = "Dropdown",
@@ -267,7 +264,7 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         press(Shortcut(KeyEvent.KEYCODE_1))
     }
 
-    val buttonActions = mapOf(
+    val buttonActions = mutableMapOf(
         1 to listOf({ alphanum() }, { numericSequence() }), // Button 1 actions for Profile 1 and 2
         2 to listOf({ press(Shortcut(KeyEvent.KEYCODE_B)) }, { press(Shortcut(KeyEvent.KEYCODE_2)) }),
         3 to listOf({ press(Shortcut(KeyEvent.KEYCODE_C)) }, { press(Shortcut(KeyEvent.KEYCODE_3)) }),
@@ -277,6 +274,171 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         7 to listOf({ press(Shortcut(KeyEvent.KEYCODE_G)) }, { press(Shortcut(KeyEvent.KEYCODE_7)) }),
         8 to listOf({ press(Shortcut(KeyEvent.KEYCODE_H)) }, { press(Shortcut(KeyEvent.KEYCODE_8)) })
     )
+
+    val supportedKeyCodes = listOf(
+        KeyEvent.KEYCODE_0,
+        KeyEvent.KEYCODE_1,
+        KeyEvent.KEYCODE_2,
+        KeyEvent.KEYCODE_3,
+        KeyEvent.KEYCODE_4,
+        KeyEvent.KEYCODE_5,
+        KeyEvent.KEYCODE_6,
+        KeyEvent.KEYCODE_7,
+        KeyEvent.KEYCODE_8,
+        KeyEvent.KEYCODE_9,
+        KeyEvent.KEYCODE_A,
+        KeyEvent.KEYCODE_B,
+        KeyEvent.KEYCODE_C,
+        KeyEvent.KEYCODE_D,
+        KeyEvent.KEYCODE_E,
+        KeyEvent.KEYCODE_F,
+        KeyEvent.KEYCODE_G,
+        KeyEvent.KEYCODE_H,
+        KeyEvent.KEYCODE_I,
+        KeyEvent.KEYCODE_J,
+        KeyEvent.KEYCODE_K,
+        KeyEvent.KEYCODE_L,
+        KeyEvent.KEYCODE_M,
+        KeyEvent.KEYCODE_N,
+        KeyEvent.KEYCODE_O,
+        KeyEvent.KEYCODE_P,
+        KeyEvent.KEYCODE_Q,
+        KeyEvent.KEYCODE_R,
+        KeyEvent.KEYCODE_S,
+        KeyEvent.KEYCODE_T,
+        KeyEvent.KEYCODE_U,
+        KeyEvent.KEYCODE_V,
+        KeyEvent.KEYCODE_W,
+        KeyEvent.KEYCODE_X,
+        KeyEvent.KEYCODE_Y,
+        KeyEvent.KEYCODE_Z,
+        KeyEvent.KEYCODE_SPACE,
+        KeyEvent.KEYCODE_ENTER,
+        KeyEvent.KEYCODE_DEL,
+        KeyEvent.KEYCODE_TAB,
+        KeyEvent.KEYCODE_ESCAPE,
+        KeyEvent.KEYCODE_SHIFT_LEFT,
+        KeyEvent.KEYCODE_SHIFT_RIGHT,
+        KeyEvent.KEYCODE_CTRL_LEFT,
+        KeyEvent.KEYCODE_CTRL_RIGHT,
+        KeyEvent.KEYCODE_ALT_LEFT,
+        KeyEvent.KEYCODE_ALT_RIGHT,
+        KeyEvent.KEYCODE_BACK,
+        KeyEvent.KEYCODE_HOME,
+        KeyEvent.KEYCODE_INSERT,
+        KeyEvent.KEYCODE_FORWARD_DEL,
+        KeyEvent.KEYCODE_PAGE_UP,
+        KeyEvent.KEYCODE_PAGE_DOWN,
+        KeyEvent.KEYCODE_VOLUME_UP,
+        KeyEvent.KEYCODE_VOLUME_DOWN,
+        KeyEvent.KEYCODE_VOLUME_MUTE,
+        KeyEvent.KEYCODE_MEDIA_PLAY,
+        KeyEvent.KEYCODE_MEDIA_PAUSE,
+        KeyEvent.KEYCODE_MEDIA_STOP,
+        KeyEvent.KEYCODE_MEDIA_NEXT,
+        KeyEvent.KEYCODE_MEDIA_PREVIOUS,
+        KeyEvent.KEYCODE_MEDIA_REWIND,
+        KeyEvent.KEYCODE_MEDIA_FAST_FORWARD,
+        KeyEvent.KEYCODE_MENU,
+        KeyEvent.KEYCODE_APP_SWITCH,
+        KeyEvent.KEYCODE_BUTTON_A,
+        KeyEvent.KEYCODE_BUTTON_B,
+        KeyEvent.KEYCODE_BUTTON_C,
+        KeyEvent.KEYCODE_BUTTON_X,
+        KeyEvent.KEYCODE_BUTTON_Y,
+        KeyEvent.KEYCODE_BUTTON_Z,
+        KeyEvent.KEYCODE_BUTTON_L1,
+        KeyEvent.KEYCODE_BUTTON_R1,
+        KeyEvent.KEYCODE_BUTTON_L2,
+        KeyEvent.KEYCODE_BUTTON_R2,
+        KeyEvent.KEYCODE_BUTTON_THUMBL,
+        KeyEvent.KEYCODE_BUTTON_THUMBR,
+        KeyEvent.KEYCODE_BUTTON_START,
+        KeyEvent.KEYCODE_BUTTON_SELECT,
+        KeyEvent.KEYCODE_BUTTON_MODE,
+        KeyEvent.KEYCODE_DPAD_UP,
+        KeyEvent.KEYCODE_DPAD_DOWN,
+        KeyEvent.KEYCODE_DPAD_LEFT,
+        KeyEvent.KEYCODE_DPAD_RIGHT,
+        KeyEvent.KEYCODE_DPAD_CENTER
+    )
+
+
+    fun getKeyName(keyCode: Int): String {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_A -> "A"
+            KeyEvent.KEYCODE_B -> "B"
+            // Ajoutez les autres keycodes ici aaaabbbb&&&&ééééé&"'(-è_&&&&&&
+            else -> "Unknown ($keyCode)"
+        }
+    }
+    fun updateButtonAction(buttonNumber: Int, keyCode: Int) {
+        buttonActions[buttonNumber] = listOf({ press(Shortcut(keyCode)) }, { press(Shortcut(keyCode)) })
+    }
+
+    var selectedKey by remember { mutableStateOf(KeyEvent.KEYCODE_UNKNOWN) }
+    var showKeyDropdown by remember { mutableStateOf(false) }
+    var showKeyDialog by remember { mutableStateOf(false) }
+    var newKeyCode by remember { mutableStateOf("") }
+
+    Box(modifier = Modifier.clickable { showKeyDropdown = !showKeyDropdown }) {
+        Text("Selected key : ${getKeyName(selectedKey)}")
+        Icon(
+            imageVector = Icons.Default.ArrowDropDown,
+            contentDescription = "Dropdown",
+            modifier = Modifier.align(Alignment.CenterEnd).padding(start = 8.dp)
+        )
+
+        DropdownMenu(
+            expanded = showKeyDropdown,
+            onDismissRequest = { showKeyDropdown = false }
+        ) {
+            supportedKeyCodes.forEach { keyCode ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectedKey = keyCode
+                        showKeyDropdown = false
+                        showKeyDialog = true
+                    },
+                    text = { Text(getKeyName(keyCode)) }
+                )
+            }
+        }
+
+    }
+
+    if (showKeyDialog) {
+        AlertDialog(
+            onDismissRequest = { showKeyDialog = false },
+            title = { Text("Enter custom key code") },
+            text = {
+                TextField(
+                    value = newKeyCode,
+                    onValueChange = { newKeyCode = it },
+                    label = { Text("Key code") }
+                )
+            },
+            confirmButton = {
+                Button(onClick = {
+                    selectedKey = newKeyCode.toIntOrNull() ?: KeyEvent.KEYCODE_UNKNOWN
+                    showKeyDialog = false
+                    updateButtonAction(selectedButton, selectedKey)
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showKeyDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+
+
+
+
 
     Column(modifier = Modifier
         .fillMaxWidth()
