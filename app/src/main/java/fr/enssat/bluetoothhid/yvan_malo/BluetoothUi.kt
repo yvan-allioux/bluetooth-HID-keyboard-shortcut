@@ -100,12 +100,14 @@ fun BluetoothUiConnection(bluetoothController: BluetoothController) {
         }
     }
 }
+
 private fun saveSelectedProfile(context: Context, profile: Int) {
     val sharedPreferences = context.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
     editor.putInt("selected_profile", profile)
     editor.apply()
 }
+
 private fun loadSelectedProfile(context: Context): Int {
     val sharedPreferences = context.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
     return sharedPreferences.getInt("selected_profile", 1)
@@ -127,7 +129,8 @@ private fun loadButtonLabels(context: Context): Map<Int, String> {
     val buttonLabels = mutableMapOf<Int, String>()
 
     for (buttonNumber in 1..8) {
-        val label = sharedPreferences.getString("button_label_$buttonNumber", "Action $buttonNumber")
+        val label =
+            sharedPreferences.getString("button_label_$buttonNumber", "Action $buttonNumber")
         buttonLabels[buttonNumber] = label ?: "Action $buttonNumber"
     }
 
@@ -153,12 +156,16 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
 
     // Fonction pour envoyer des raccourcis clavier
     fun press(shortcut: Shortcut, releaseModifiers: Boolean = true) {
-        val result = keyboardSender.sendKeyboard(shortcut.shortcutKey, shortcut.modifiers, releaseModifiers)
-        if (!result) Toast.makeText(context, "Can't find keymap for $shortcut", Toast.LENGTH_LONG).show()
+        val result =
+            keyboardSender.sendKeyboard(shortcut.shortcutKey, shortcut.modifiers, releaseModifiers)
+        if (!result) Toast.makeText(context, "Can't find keymap for $shortcut", Toast.LENGTH_LONG)
+            .show()
     }
+    // Fonction pour envoyer des raccourcis clavier
     fun press(keyCode: Int, releaseModifiers: Boolean = true) {
         val result = keyboardSender.sendKeyboard(keyCode, emptyList(), releaseModifiers)
-        if (!result) Toast.makeText(context, "Can't find keymap for $keyCode", Toast.LENGTH_LONG).show()
+        if (!result) Toast.makeText(context, "Can't find keymap for $keyCode", Toast.LENGTH_LONG)
+            .show()
     }
 
     // UI pour sélectionner le profil
@@ -170,7 +177,8 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
 
 
     // Charge les noms des boutons d'action
-    val buttonLabels = remember { mutableStateMapOf<Int, String>().apply { putAll(loadButtonLabels(context)) } }
+    val buttonLabels =
+        remember { mutableStateMapOf<Int, String>().apply { putAll(loadButtonLabels(context)) } }
 
     // Fonction pour mettre à jour le texte d'un bouton
     fun updateButtonText(buttonNumber: Int, newText: String) {
@@ -188,7 +196,10 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
                 onClick = {
                     selectedProfile = index + 1
                     expanded = false
-                    saveSelectedProfile(context, selectedProfile) // Enregistre le nouveau profil sélectionné
+                    saveSelectedProfile(
+                        context,
+                        selectedProfile
+                    ) // Enregistre le nouveau profil sélectionné
                 },
                 text = { Text(profile) }
             )
@@ -196,85 +207,103 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
     }
 
 
-
-
+    //definiton des boutons
     var selectedButton by remember { mutableStateOf(1) }
-        var showDropdown by remember { mutableStateOf(false) }
-        var showPopup by remember { mutableStateOf(false) }
+    var showDropdown by remember { mutableStateOf(false) }
+    var showPopup by remember { mutableStateOf(false) }
+    //UI pour changer le texte des boutons
+    Box(modifier = Modifier.clickable { showDropdown = !showDropdown }) {
+        Text("Change button text  : $selectedButton")
+        Icon(
+            imageVector = Icons.Default.ArrowDropDown,
+            contentDescription = "Dropdown",
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(start = 8.dp)
+        )
 
-        Box(modifier = Modifier.clickable { showDropdown = !showDropdown }) {
-            Text("Change button text  : $selectedButton")
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Dropdown",
-                modifier = Modifier.align(Alignment.CenterEnd).padding(start = 8.dp)
-            )
-
-            DropdownMenu(
-                expanded = showDropdown,
-                onDismissRequest = { showDropdown = false }
-            ) {
-                (1..8).forEach { buttonIndex ->
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedButton = buttonIndex
-                            showDropdown = false
-                            showPopup = true
-                        },
-                        text = { Text("Button $buttonIndex") }
-                    )
-                }
+        DropdownMenu(
+            expanded = showDropdown,
+            onDismissRequest = { showDropdown = false }
+        ) {
+            (1..8).forEach { buttonIndex ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectedButton = buttonIndex
+                        showDropdown = false
+                        showPopup = true
+                    },
+                    text = { Text("Button $buttonIndex") }
+                )
             }
         }
+    }
+    // Popup pour changer le texte des boutons
+    if (showPopup) {
+        var newText by remember { mutableStateOf("") }
 
-        if (showPopup) {
-            var newText by remember { mutableStateOf("") }
-
-            AlertDialog(
-                onDismissRequest = { showPopup = false },
-                title = { Text("Enter new button text") },
-                text = {
-                    TextField(
-                        value = newText,
-                        onValueChange = { newText = it },
-                        label = { Text("New text") }
-                    )
-                },
-                confirmButton = {
-                    Button(onClick = {
-                        updateButtonText(selectedButton, newText)
-                        showPopup = false
-                    }) {
-                        Text("OK")
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = { showPopup = false }) {
-                        Text("Cancel")
-                    }
+        AlertDialog(
+            onDismissRequest = { showPopup = false },
+            title = { Text("Enter new button text") },
+            text = {
+                TextField(
+                    value = newText,
+                    onValueChange = { newText = it },
+                    label = { Text("New text") }
+                )
+            },
+            confirmButton = {
+                Button(onClick = {
+                    updateButtonText(selectedButton, newText)
+                    showPopup = false
+                }) {
+                    Text("OK")
                 }
-            )
-        }
+            },
+            dismissButton = {
+                Button(onClick = { showPopup = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
-
-    fun alphanum (){
+    //fonction pour envoyer des raccourcis clavier
+    fun alphanum() {
         press(Shortcut(KeyEvent.KEYCODE_A))
     }
+
     fun numericSequence() {
         press(Shortcut(KeyEvent.KEYCODE_1))
     }
 
+    // Définition des actions pour chaque bouton
     val buttonActions = mutableMapOf(
         1 to listOf({ alphanum() }, { numericSequence() }), // Button 1 actions for Profile 1 and 2
-        2 to listOf({ press(Shortcut(KeyEvent.KEYCODE_B)) }, { press(Shortcut(KeyEvent.KEYCODE_2)) }),
-        3 to listOf({ press(Shortcut(KeyEvent.KEYCODE_C)) }, { press(Shortcut(KeyEvent.KEYCODE_3)) }),
-        4 to listOf({ press(Shortcut(KeyEvent.KEYCODE_D)) }, { press(Shortcut(KeyEvent.KEYCODE_4)) }),
-        5 to listOf({ press(Shortcut(KeyEvent.KEYCODE_E)) }, { press(Shortcut(KeyEvent.KEYCODE_5)) }),
-        6 to listOf({ press(Shortcut(KeyEvent.KEYCODE_F)) }, { press(Shortcut(KeyEvent.KEYCODE_6)) }),
-        7 to listOf({ press(Shortcut(KeyEvent.KEYCODE_G)) }, { press(Shortcut(KeyEvent.KEYCODE_7)) }),
-        8 to listOf({ press(Shortcut(KeyEvent.KEYCODE_H)) }, { press(Shortcut(KeyEvent.KEYCODE_8)) })
+        2 to listOf(
+            { press(Shortcut(KeyEvent.KEYCODE_B)) },
+            { press(Shortcut(KeyEvent.KEYCODE_2)) }),
+        3 to listOf(
+            { press(Shortcut(KeyEvent.KEYCODE_C)) },
+            { press(Shortcut(KeyEvent.KEYCODE_3)) }),
+        4 to listOf(
+            { press(Shortcut(KeyEvent.KEYCODE_D)) },
+            { press(Shortcut(KeyEvent.KEYCODE_4)) }),
+        5 to listOf(
+            { press(Shortcut(KeyEvent.KEYCODE_E)) },
+            { press(Shortcut(KeyEvent.KEYCODE_5)) }),
+        6 to listOf(
+            { press(Shortcut(KeyEvent.KEYCODE_F)) },
+            { press(Shortcut(KeyEvent.KEYCODE_6)) }),
+        7 to listOf(
+            { press(Shortcut(KeyEvent.KEYCODE_G)) },
+            { press(Shortcut(KeyEvent.KEYCODE_7)) }),
+        8 to listOf(
+            { press(Shortcut(KeyEvent.KEYCODE_H)) },
+            { press(Shortcut(KeyEvent.KEYCODE_8)) })
     )
 
+    // Liste des keycodes supportés
     val supportedKeyCodes = listOf(
         KeyEvent.KEYCODE_0,
         KeyEvent.KEYCODE_1,
@@ -363,7 +392,7 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         KeyEvent.KEYCODE_DPAD_CENTER
     )
 
-
+    //fonction pour obtenir le nom de la touche
     fun getKeyName(keyCode: Int): String {
         return when (keyCode) {
             KeyEvent.KEYCODE_A -> "A"
@@ -372,21 +401,26 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
             else -> "Unknown ($keyCode)"
         }
     }
-    fun updateButtonAction(buttonNumber: Int, keyCode: Int) {
-        buttonActions[buttonNumber] = listOf({ press(Shortcut(keyCode)) }, { press(Shortcut(keyCode)) })
-    }
 
+    //fonction pour mettre à jour l'action du bouton
+    fun updateButtonAction(buttonNumber: Int, keyCode: Int) {
+        buttonActions[buttonNumber] =
+            listOf({ press(Shortcut(keyCode)) }, { press(Shortcut(keyCode)) })
+    }
+    //definition des variables pour la selection de la touche
     var selectedKey by remember { mutableStateOf(KeyEvent.KEYCODE_UNKNOWN) }
     var showKeyDropdown by remember { mutableStateOf(false) }
     var showKeyDialog by remember { mutableStateOf(false) }
     var newKeyCode by remember { mutableStateOf("") }
-
+    //UI pour la selection de la touche
     Box(modifier = Modifier.clickable { showKeyDropdown = !showKeyDropdown }) {
         Text("Selected key : ${getKeyName(selectedKey)}")
         Icon(
             imageVector = Icons.Default.ArrowDropDown,
             contentDescription = "Dropdown",
-            modifier = Modifier.align(Alignment.CenterEnd).padding(start = 8.dp)
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(start = 8.dp)
         )
 
         DropdownMenu(
@@ -406,7 +440,7 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         }
 
     }
-
+    //Popup pour la selection de la touche
     if (showKeyDialog) {
         AlertDialog(
             onDismissRequest = { showKeyDialog = false },
@@ -436,14 +470,13 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
     }
 
 
-
-
-
-
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(20.dp)
-        .fillMaxSize()) {
+    //UI pour les boutons
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+            .fillMaxSize()
+    ) {
         Spacer(modifier = Modifier.weight(1f)) // Espacement pour aligner le contenu
         Text("Stream Deck Controls")
         Spacer(modifier = Modifier.size(10.dp))
@@ -452,9 +485,11 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
         val buttonHeightWeight = 1f
         Column {
             for (row in 1..4) {
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(buttonHeightWeight), horizontalArrangement = Arrangement.SpaceEvenly) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(buttonHeightWeight), horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     for (column in 1..2) {
                         val buttonIndex = (row - 1) * 2 + column
                         Button(
@@ -462,7 +497,9 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
                                 .weight(buttonHeightWeight)
                                 .padding(end = 4.dp)
                                 .fillMaxHeight(),
-                            onClick = { buttonActions[buttonIndex]?.get(selectedProfile - 1)?.invoke() }
+                            onClick = {
+                                buttonActions[buttonIndex]?.get(selectedProfile - 1)?.invoke()
+                            }
                         ) {
                             Text(buttonLabels[buttonIndex] ?: "Action $buttonIndex")
                         }
