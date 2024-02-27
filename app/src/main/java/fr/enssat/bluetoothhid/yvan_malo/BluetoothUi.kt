@@ -1,6 +1,7 @@
 package fr.enssat.bluetoothhid.yvan_malo
 
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.view.KeyEvent
 import android.widget.Toast
@@ -100,6 +101,39 @@ fun BluetoothUiConnection(bluetoothController: BluetoothController) {
         }
     }
 }
+private fun saveSelectedProfile(context: Context, profile: Int) {
+    val sharedPreferences = context.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    editor.putInt("selected_profile", profile)
+    editor.apply()
+}
+private fun loadSelectedProfile(context: Context): Int {
+    val sharedPreferences = context.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+    return sharedPreferences.getInt("selected_profile", 1)
+}
+
+private fun saveButtonLabels(context: Context, buttonLabels: Map<Int, String>) {
+    val sharedPreferences = context.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+
+    for ((buttonNumber, label) in buttonLabels) {
+        editor.putString("button_label_$buttonNumber", label)
+    }
+
+    editor.apply()
+}
+
+private fun loadButtonLabels(context: Context): Map<Int, String> {
+    val sharedPreferences = context.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+    val buttonLabels = mutableMapOf<Int, String>()
+
+    for (buttonNumber in 1..8) {
+        val label = sharedPreferences.getString("button_label_$buttonNumber", "Action $buttonNumber")
+        buttonLabels[buttonNumber] = label ?: "Action $buttonNumber"
+    }
+
+    return buttonLabels
+}
 
 @Composable
 fun BluetoothDesk(bluetoothController: BluetoothController) {
@@ -108,11 +142,13 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
 
     // Contexte actuel de l'application
     val context = LocalContext.current
+
+
     // Initialisation de l'envoi de commandes clavier
     val keyboardSender = KeyboardSender(connected.btHidDevice, connected.hostDevice)
 
     // Gestion du profil sélectionné
-    var selectedProfile by remember { mutableStateOf(1) }
+    var selectedProfile by remember { mutableStateOf(loadSelectedProfile(context)) }
     val profiles = listOf("Profile 1", "Profile 2")
     var expanded by remember { mutableStateOf(false) }
 
@@ -136,21 +172,13 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
     }
 
 
-    val buttonLabels = remember {
-        mutableStateMapOf<Int, String>(
-            1 to "Action 1",
-            2 to "Action 2",
-            3 to "Action 3",
-            4 to "Action 4",
-            5 to "Action 5",
-            6 to "Action 6",
-            7 to "Action 7",
-            8 to "Action 8"
-        )
-    }
+    // Charge les noms des boutons d'action
+    val buttonLabels = remember { mutableStateMapOf<Int, String>().apply { putAll(loadButtonLabels(context)) } }
+
     // Fonction pour mettre à jour le texte d'un bouton
     fun updateButtonText(buttonNumber: Int, newText: String) {
         buttonLabels[buttonNumber] = newText
+        saveButtonLabels(context, buttonLabels)
     }
 
     // Menu déroulant pour le choix du profil
@@ -163,6 +191,7 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
                 onClick = {
                     selectedProfile = index + 1
                     expanded = false
+                    saveSelectedProfile(context, selectedProfile) // Enregistre le nouveau profil sélectionné
                 },
                 text = { Text(profile) }
             )
@@ -171,7 +200,8 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
 
 
 
-        var selectedButton by remember { mutableStateOf(1) }
+
+    var selectedButton by remember { mutableStateOf(1) }
         var showDropdown by remember { mutableStateOf(false) }
         var showPopup by remember { mutableStateOf(false) }
 
@@ -282,4 +312,6 @@ fun BluetoothDesk(bluetoothController: BluetoothController) {
     }
 
 }
+
+
 
